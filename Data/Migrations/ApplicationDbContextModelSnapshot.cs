@@ -8,7 +8,7 @@ using RentalCar.Data;
 
 #nullable disable
 
-namespace RentalCar.Migrations
+namespace RentalCar.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -220,6 +220,140 @@ namespace RentalCar.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("RentalCar.Models.Clientes", b =>
+                {
+                    b.Property<int>("ClienteId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ClienteId"));
+
+                    b.Property<string>("Direccion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Identificacion")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nombres")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Telefono")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ClienteId");
+
+                    b.ToTable("Clientes");
+                });
+
+            modelBuilder.Entity("RentalCar.Models.MetodoPago", b =>
+                {
+                    b.Property<int>("MetodoPagoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MetodoPagoId"));
+
+                    b.Property<DateTime>("FechaTransaccion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Monto")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ReservaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Tipo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("MetodoPagoId");
+
+                    b.HasIndex("ReservaId");
+
+                    b.ToTable("MetodoPagos");
+                });
+
+            modelBuilder.Entity("RentalCar.Models.Reservas", b =>
+                {
+                    b.Property<int>("ReservaId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReservaId"));
+
+                    b.Property<int>("ClienteId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("FechaDevolucion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaRecogida")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("TotalPrecio")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("VehiculoId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("VehiculosId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ReservaId");
+
+                    b.HasIndex("ClienteId");
+
+                    b.HasIndex("VehiculosId");
+
+                    b.ToTable("Reservas");
+                });
+
+            modelBuilder.Entity("RentalCar.Models.Vehiculos", b =>
+                {
+                    b.Property<int>("VehiculosId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VehiculosId"));
+
+                    b.Property<string>("Categoria")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Disponible")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Marca")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Modelo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("PrecioPorDia")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("VehiculosId");
+
+                    b.ToTable("Vehiculos");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -269,6 +403,34 @@ namespace RentalCar.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("RentalCar.Models.MetodoPago", b =>
+                {
+                    b.HasOne("RentalCar.Models.Reservas", "Reserva")
+                        .WithMany()
+                        .HasForeignKey("ReservaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Reserva");
+                });
+
+            modelBuilder.Entity("RentalCar.Models.Reservas", b =>
+                {
+                    b.HasOne("RentalCar.Models.Clientes", "Cliente")
+                        .WithMany()
+                        .HasForeignKey("ClienteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RentalCar.Models.Vehiculos", "Vehiculo")
+                        .WithMany()
+                        .HasForeignKey("VehiculosId");
+
+                    b.Navigation("Cliente");
+
+                    b.Navigation("Vehiculo");
                 });
 #pragma warning restore 612, 618
         }
